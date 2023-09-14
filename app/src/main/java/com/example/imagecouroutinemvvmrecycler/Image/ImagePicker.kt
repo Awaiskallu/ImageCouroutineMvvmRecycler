@@ -1,16 +1,17 @@
 package com.example.imagecouroutinemvvmrecycler.Image
 
+import ImageViewModel
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.imagecouroutinemvvmrecycler.Permission.READ_EXTERNAL_STORAGE_PERMISSION_REQUEST
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.imagecouroutinemvvmrecycler.ImageAdapter.ImageAdapter
 import com.example.imagecouroutinemvvmrecycler.R
-import com.example.imagecouroutinemvvmrecycler.ViewModel.ImageViewModel
 
 
 @Suppress("DEPRECATION")
@@ -20,6 +21,8 @@ class ImagePicker : AppCompatActivity() {
 
     private lateinit var viewModel: ImageViewModel
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: ImageAdapter
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,28 +32,26 @@ class ImagePicker : AppCompatActivity() {
 
         selectedImageView = findViewById(R.id.selectedImageView)
 
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = ImageAdapter(viewModel.selectedImageUris)
+        recyclerView.adapter = adapter
+
         val selectImageButton = findViewById<Button>(R.id.selectImageButton)
         selectImageButton.setOnClickListener {
             viewModel.openGallery(this)
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == READ_EXTERNAL_STORAGE_PERMISSION_REQUEST) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, you can now open the gallery
-                viewModel.openGallery(this)
-            } else {
-                // Permission denied
-                // You can show a message to the user or handle this case as needed
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        viewModel.handleActivityResult(requestCode, resultCode, data)
+        adapter.notifyDataSetChanged() // Update the RecyclerView when new images are added
     }
+}
+
+
+
 
 //    private fun openGallery() {
 //        // Check and request permission if needed
@@ -67,20 +68,3 @@ class ImagePicker : AppCompatActivity() {
 //        intent.type = "image/*"
 //        startActivityForResult(intent, GALLERY_REQUEST_CODE)
 //    }
-
-
-    // Define GALLERY_REQUEST_CODE as a class constant
-    private val GALLERY_REQUEST_CODE = 102
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        viewModel.handleActivityResult(requestCode, resultCode, data)
-
-        if (viewModel.selectedImageUri != null) {
-            // Display the selected image in the ImageView
-            selectedImageView.setImageURI(viewModel.selectedImageUri)
-            selectedImageView.visibility = ImageView.VISIBLE
-        }
-    }
-}
