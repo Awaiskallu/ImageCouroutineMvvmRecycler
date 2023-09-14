@@ -1,6 +1,6 @@
 package com.example.imagecouroutinemvvmrecycler.Image
 
-import ImageViewModel
+
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.imagecouroutinemvvmrecycler.ImageAdapter.ImageAdapter
 import com.example.imagecouroutinemvvmrecycler.R
+import com.example.imagecouroutinemvvmrecycler.ViewModel.ImageViewModel
 
 
 @Suppress("DEPRECATION")
@@ -41,6 +42,7 @@ class ImagePicker : AppCompatActivity() {
         selectImageButton.setOnClickListener {
             viewModel.openGallery(this)
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

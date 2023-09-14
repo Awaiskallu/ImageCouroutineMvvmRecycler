@@ -1,17 +1,38 @@
+package com.example.imagecouroutinemvvmrecycler.ViewModel
+
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.imagecouroutinemvvmrecycler.Image.ImagePicker
+import kotlinx.coroutines.launch
+import com.example.imagecouroutinemvvmrecycler.Permission.checkAndRequestPermission
+import kotlinx.coroutines.delay
 
 class ImageViewModel : ViewModel() {
     var selectedImageUris: MutableList<Uri> = mutableListOf()
     private val GALLERY_REQUEST_CODE = 102
 
     fun openGallery(activity: Activity) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "image/*"
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true) // Enable multiple image selection
-        activity.startActivityForResult(intent, GALLERY_REQUEST_CODE)
+        viewModelScope.launch {
+            // Check and request permission if needed
+            if (checkAndRequestPermission(activity as ImagePicker)) {
+
+
+                delay(2000)
+
+                // Permission already granted, open the gallery
+                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                activity.startActivityForResult(intent, GALLERY_REQUEST_CODE)
+            }
+
+        }
+
+        Log.d(ContentValues.TAG, "Select Image")
     }
 
     fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
