@@ -17,18 +17,19 @@ class ImageViewModel : ViewModel() {
     var selectedImageUris: MutableList<Uri> = mutableListOf()
     private val GALLERY_REQUEST_CODE = 102
 
-    fun openGallery(activity: Activity) {
+
+    suspend fun openGallery(activity: Activity) {
         viewModelScope.launch {
-            // Check and request permission if needed
-            if (checkAndRequestPermission(activity as ImagePicker)) {
+        // Check and request permission if needed
+        if (checkAndRequestPermission(activity as ImagePicker)) {
 
 
-                delay(2000)
+            delay(2000)
 
-                // Permission already granted, open the gallery
-                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                activity.startActivityForResult(intent, GALLERY_REQUEST_CODE)
-            }
+            // Permission already granted, open the gallery
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            activity.startActivityForResult(intent, GALLERY_REQUEST_CODE)
+        }
 
         }
 

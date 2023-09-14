@@ -8,12 +8,13 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope // Import lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.imagecouroutinemvvmrecycler.ImageAdapter.ImageAdapter
 import com.example.imagecouroutinemvvmrecycler.R
 import com.example.imagecouroutinemvvmrecycler.ViewModel.ImageViewModel
-
+import kotlinx.coroutines.launch // Import launch from kotlinx.coroutines
 
 @Suppress("DEPRECATION")
 class ImagePicker : AppCompatActivity() {
@@ -40,9 +41,11 @@ class ImagePicker : AppCompatActivity() {
 
         val selectImageButton = findViewById<Button>(R.id.selectImageButton)
         selectImageButton.setOnClickListener {
-            viewModel.openGallery(this)
+            // Use viewModelScope to launch a coroutine
+            lifecycleScope.launch { // Change to lifecycleScope.launch
+                viewModel.openGallery(this@ImagePicker)
+            }
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -51,22 +54,3 @@ class ImagePicker : AppCompatActivity() {
         adapter.notifyDataSetChanged() // Update the RecyclerView when new images are added
     }
 }
-
-
-
-
-//    private fun openGallery() {
-//        // Check and request permission if needed
-//        if (checkAndRequestPermission(this)) {
-//            // Permission already granted, open the gallery
-//            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//            startActivityForResult(intent, GALLERY_REQUEST_CODE)
-//        }
-//    }
-//
-
-//        private fun openGallery() {
-//        val intent = Intent(Intent.ACTION_GET_CONTENT)
-//        intent.type = "image/*"
-//        startActivityForResult(intent, GALLERY_REQUEST_CODE)
-//    }
